@@ -12,6 +12,9 @@ function get_bytes {
 	now=$(date +%s%N)
 }
 
+   
+
+
 # Function which calculates the speed using actual and old byte number.
 # Speed is shown in KByte per second when greater or equal than 1 KByte per second.
 # This function should be called each second.
@@ -102,25 +105,12 @@ get_battery_charging_status() {
 
 
 print_bat(){
-	#hash acpi || return 0
-	#onl="$(grep "on-line" <(acpi -V))"
-	#charge="$(awk '{ sum += $1 } END { print sum }' /sys/class/power_supply/BAT*/capacity)%"
-	#if test -z "$onl"
-	#then
-		## suspend when we close the lid
-		##systemctl --user stop inhibit-lid-sleep-on-battery.service
-		#echo -e "${charge}"
-	#else
-		## On mains! no need to suspend
-		##systemctl --user start inhibit-lid-sleep-on-battery.service
-		#echo -e "${charge}"
-	#fi
-	#echo "$(get_battery_charging_status) $(get_battery_combined_percent)%, $(get_time_until_charged )";
-	echo "$(get_battery_charging_status) $(get_battery_combined_percent)%, $(get_time_until_charged )";
+	  cat /sys/class/power_supply/BAT0/capacity
+
 }
 
 print_date(){
-	date '+%Y年%m月%d日 %H:%M'
+	date '+%Y-%m-%d 🕙%H:%M'
 }
 
 show_record(){
@@ -156,7 +146,8 @@ get_bytes
 vel_recv=$(get_velocity $received_bytes $old_received_bytes $now)
 vel_trans=$(get_velocity $transmitted_bytes $old_transmitted_bytes $now)
 
-xsetroot -name "  💿 $(print_mem)M ⬇️ $vel_recv ⬆️ $vel_trans $(dwm_alsa) [ $(print_bat) ]$(show_record) $(print_date) "
+xsetroot -name "  💿 $(print_mem)M ⬇️ $vel_recv ⬆️ $vel_trans  $(dwm_alsa) [ $(get_battery_charging_status),$(print_bat)% ] $(print_date) "
+#⬇️ $vel_recv ⬆️ $vel_trans  
 
 # Update old values to perform new calculations
 old_received_bytes=$received_bytes
